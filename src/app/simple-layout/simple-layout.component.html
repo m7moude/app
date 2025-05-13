@@ -1,0 +1,80 @@
+<div class="layout-container" [ngClass]="{'auth-layout': isAuthPage}">
+  <!-- Sidebar - Hidden on auth pages -->
+  <div class="sidebar" *ngIf="!isAuthPage">
+    <div class="logo">
+      <i class="fas fa-leaf"></i>
+      <h2>SRA</h2>
+      <p>Smart Ranch App</p>
+    </div>
+
+    <div class="menu-section">
+      <h3>MAIN</h3>
+      <ul>
+        <li><a routerLink="/dashboard" routerLinkActive="active"><i class="fas fa-th-large"></i> <span>Dashboard</span></a></li>
+        <li><a routerLink="/animals" routerLinkActive="active"><i class="fas fa-horse"></i> <span>Animals</span> <span class="badge">24</span></a></li>
+        <li><a routerLink="/dairy" routerLinkActive="active"><i class="fas fa-wine-bottle"></i> <span>Dairy</span></a></li>
+        <li><a routerLink="/newborn" routerLinkActive="active"><i class="fas fa-baby"></i> <span>New Born</span> <span class="badge new">New</span></a></li>
+      </ul>
+    </div>
+
+    <div class="menu-section">
+      <h3>MANAGEMENT</h3>
+      <ul>
+        <li><a routerLink="/feed" routerLinkActive="active"><i class="fas fa-utensils"></i> <span>Feed</span></a></li>
+        <li><a routerLink="/ingredients" routerLinkActive="active"><i class="fas fa-shopping-basket"></i> <span>Ingredients</span></a></li>
+        <li><a routerLink="/vaccination" routerLinkActive="active"><i class="fas fa-syringe"></i> <span>Vaccination</span></a></li>
+      </ul>
+    </div>
+
+    <div class="menu-section">
+      <h3>ANALYTICS</h3>
+      <ul>
+        <li><a routerLink="/reports" routerLinkActive="active"><i class="fas fa-chart-bar"></i> <span>Reports</span></a></li>
+        <li><a routerLink="/statistics" routerLinkActive="active"><i class="fas fa-chart-pie"></i> <span>Statistics</span></a></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-footer">
+      <a routerLink="/settings">
+        <i class="fas fa-cog"></i> <span>Settings</span>
+      </a>
+      <a routerLink="/help">
+        <i class="fas fa-question-circle"></i> <span>Help</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" [ngClass]="{'full-width': isAuthPage}">
+    <!-- Navbar - Hidden on auth pages -->
+    <div class="navbar" *ngIf="!isAuthPage">
+      <div class="navbar-left">
+        <div class="page-title">{{ getPageTitle() }}</div>
+      </div>
+      <div class="navbar-right">
+        <div class="navbar-icon">
+          <i class="fas fa-search"></i>
+        </div>
+        <div class="notifications">
+          <i class="fas fa-bell"></i>
+        </div>
+        <div class="user-info">
+          <span class="user-name">{{ userName }}</span>
+          <span class="user-role">({{ getUserRole() }})</span>
+        </div>
+        <div class="user-profile">
+          <img src="assets/images/user-avatar.png" alt="User">
+        </div>
+        <div class="logout-btn" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area" [ngClass]="{'auth-content': isAuthPage}">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

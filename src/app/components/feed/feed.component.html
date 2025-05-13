@@ -1,0 +1,49 @@
+<div class="feed-container">
+  <div class="feed-header">
+    <h2>Feed</h2>
+    <div class="feed-actions">
+      <button class="btn btn-primary" (click)="openAddFeedModal()">
+        <i class="fas fa-plus"></i> Make new feed
+      </button>
+      <button class="btn btn-secondary">
+        <i class="fas fa-edit"></i> Edit Existed Feed
+      </button>
+      <div class="search-box">
+        <input type="text" placeholder="Search">
+        <i class="fas fa-search"></i>
+      </div>
+      <button class="btn btn-danger">
+        <i class="fas fa-trash"></i> Delete Feed
+      </button>
+    </div>
+  </div>
+
+  <div class="feed-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Count</th>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Percentage of protein</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let feed of feeds; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ feed.name }}</td>
+          <td>{{ feed.type }}</td>
+          <td>
+            <div class="protein-bar">
+              <div class="protein-fill" [style.width]="feed.protein + '%'"></div>
+              <span>{{ feed.protein }}%</span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Feed Modal -->
+<app-add-feed-modal *ngIf="showAddModal" (close)="closeAddFeedModal($event)"></app-add-feed-modal>

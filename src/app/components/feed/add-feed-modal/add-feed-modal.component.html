@@ -1,0 +1,104 @@
+<div class="modal-overlay">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2>Add New Feed</h2>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form [formGroup]="feedForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="name">Feed Name</label>
+          <input
+            type="text"
+            id="name"
+            formControlName="name"
+            placeholder="Enter feed name"
+            [ngClass]="{'invalid': feedForm.get('name')?.invalid && feedForm.get('name')?.touched}"
+          >
+          <div class="error-message" *ngIf="feedForm.get('name')?.invalid && feedForm.get('name')?.touched">
+            Feed name is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="quntity">Quantity</label>
+          <input
+            type="number"
+            id="quntity"
+            formControlName="quntity"
+            placeholder="Enter quantity"
+            [ngClass]="{'invalid': feedForm.get('quntity')?.invalid && feedForm.get('quntity')?.touched}"
+          >
+          <div class="error-message" *ngIf="feedForm.get('quntity')?.invalid && feedForm.get('quntity')?.touched">
+            Quantity must be a positive number
+          </div>
+        </div>
+
+        <div class="ingredients-section">
+          <div class="section-header">
+            <h3>Ingredients</h3>
+          </div>
+
+          <div class="ingredient-add-container">
+            <div class="ingredient-add-fields">
+              <div class="ingredient-select">
+                <label>Ingredient</label>
+                <select #ingredientSelect class="scrollable-select" size="4">
+                  <option value="" disabled selected>Select ingredient</option>
+                  <option *ngFor="let ing of ingredients" [value]="ing.id">{{ ing.name }}</option>
+                </select>
+              </div>
+
+              <div class="ingredient-price">
+                <label>Price</label>
+                <input type="number" #ingredientPrice placeholder="Enter price" min="0">
+              </div>
+
+              <button type="button" class="add-ingredient-btn" (click)="addIngredientWithValues(ingredientSelect.value, ingredientPrice.value)">
+                <i class="fas fa-plus"></i> Add
+              </button>
+            </div>
+          </div>
+
+          <div formArrayName="ingredientPrice">
+            <div class="no-ingredients" *ngIf="ingredientPriceControls.length === 0">
+              No ingredients added. Use the fields above to add ingredients to this feed.
+            </div>
+
+            <div class="ingredients-list">
+              <div
+                *ngFor="let ingredient of ingredientPriceControls; let i = index"
+                [formGroupName]="i"
+                class="ingredient-row"
+              >
+                <div class="ingredient-info">
+                  <span class="ingredient-name">{{ getIngredientName(ingredient.get('id')?.value) }}</span>
+                  <span class="ingredient-price-value">{{ ingredient.get('price')?.value }} $</span>
+                </div>
+
+                <button type="button" class="remove-btn" (click)="removeIngredient(i)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="error-message main-error" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="cancel-btn" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="submit-btn" [disabled]="isLoading">
+            <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+            {{ isLoading ? 'Saving...' : 'Save Feed' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

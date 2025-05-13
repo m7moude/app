@@ -1,0 +1,117 @@
+<div class="ingredients-container">
+  <div class="ingredients-header">
+    <h2>Ingredients</h2>
+    <div class="ingredients-actions">
+      <button class="btn btn-primary" (click)="openAddModal()">
+        <i class="fas fa-plus"></i> Add Ingredient
+      </button>
+      <div class="search-box">
+        <input type="text" placeholder="Search ingredients..." (input)="onSearch($event)">
+        <i class="fas fa-search"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="ingredients-content">
+    <div class="loading-overlay" *ngIf="isLoading">
+      <div class="spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+      </div>
+    </div>
+
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <div class="empty-state" *ngIf="!isLoading && filteredIngredients.length === 0">
+      <i class="fas fa-box-open"></i>
+      <p>No ingredients found. Add your first ingredient to get started.</p>
+      <button class="btn btn-primary" (click)="openAddModal()">
+        <i class="fas fa-plus"></i> Add Ingredient
+      </button>
+    </div>
+
+    <div class="ingredients-table" *ngIf="!isLoading && filteredIngredients.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th (click)="onSort('id')" class="sortable">
+              ID <i [class]="getSortIcon('id')"></i>
+            </th>
+            <th (click)="onSort('name')" class="sortable">
+              Name <i [class]="getSortIcon('name')"></i>
+            </th>
+            <th (click)="onSort('type')" class="sortable">
+              Type <i [class]="getSortIcon('type')"></i>
+            </th>
+            <th (click)="onSort('unit')" class="sortable">
+              Unit <i [class]="getSortIcon('unit')"></i>
+            </th>
+            <th (click)="onSort('cp')" class="sortable">
+              CP (%) <i [class]="getSortIcon('cp')"></i>
+            </th>
+            <th (click)="onSort('tdn')" class="sortable">
+              TDN (%) <i [class]="getSortIcon('tdn')"></i>
+            </th>
+            <th (click)="onSort('cf')" class="sortable">
+              CF (%) <i [class]="getSortIcon('cf')"></i>
+            </th>
+            <th (click)="onSort('me')" class="sortable">
+              ME (MJ/kg) <i [class]="getSortIcon('me')"></i>
+            </th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ingredient of filteredIngredients">
+            <td>{{ ingredient.id }}</td>
+            <td>{{ ingredient.name }}</td>
+            <td>{{ getTypeName(ingredient.type) }}</td>
+            <td>{{ getUnitName(ingredient.unit) }}</td>
+            <td>{{ ingredient.cp }}%</td>
+            <td>{{ ingredient.tdn }}%</td>
+            <td>{{ ingredient.cf }}%</td>
+            <td>{{ ingredient.me }}</td>
+            <td class="actions-cell">
+              <button class="action-btn edit-btn" (click)="openEditModal(ingredient)" title="Edit">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="action-btn delete-btn" (click)="confirmDelete(ingredient.id)" title="Delete">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showDeleteConfirmation">
+  <div class="confirmation-modal">
+    <div class="confirmation-header">
+      <h3>Confirm Delete</h3>
+    </div>
+    <div class="confirmation-body">
+      <p>Are you sure you want to delete this ingredient? This action cannot be undone.</p>
+    </div>
+    <div class="confirmation-footer">
+      <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+      <button class="btn btn-danger" (click)="deleteIngredient()">
+        <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+        {{ isLoading ? 'Deleting...' : 'Delete' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Ingredient Modal -->
+<div *ngIf="showAddModal">
+  <app-add-ingredient-modal (close)="closeAddModal($event)"></app-add-ingredient-modal>
+</div>
+
+<!-- Edit Ingredient Modal -->
+<div *ngIf="showEditModal">
+  <app-edit-ingredient-modal [ingredient]="selectedIngredient" (close)="closeEditModal($event)"></app-edit-ingredient-modal>
+</div>

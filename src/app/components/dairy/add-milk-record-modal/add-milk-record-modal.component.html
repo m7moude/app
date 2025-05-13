@@ -1,0 +1,82 @@
+<div class="modal-overlay">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2>Add Milk Record</h2>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="animal-info" *ngIf="dairy">
+        <div class="animal-code">
+          <span class="label">Animal Code:</span>
+          <span class="value">{{ dairy.code }}</span>
+        </div>
+        <div class="animal-type">
+          <span class="label">Type:</span>
+          <span class="value">{{ dairy.animalType }}</span>
+        </div>
+      </div>
+
+      <form [formGroup]="milkRecordForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="milk">Milk Amount (L)</label>
+            <input
+              type="number"
+              id="milk"
+              formControlName="milk"
+              placeholder="Enter milk amount"
+              step="0.1"
+            >
+            <div class="error-message" *ngIf="milkRecordForm.get('milk')?.invalid && milkRecordForm.get('milk')?.touched">
+              <span *ngIf="milkRecordForm.get('milk')?.errors?.['required']">Milk amount is required</span>
+              <span *ngIf="milkRecordForm.get('milk')?.errors?.['min']">Milk amount must be positive</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="fatPercentage">Fat Percentage (%)</label>
+            <input
+              type="number"
+              id="fatPercentage"
+              formControlName="fatPercentage"
+              placeholder="Enter fat percentage"
+              step="0.1"
+            >
+            <div class="error-message" *ngIf="milkRecordForm.get('fatPercentage')?.invalid && milkRecordForm.get('fatPercentage')?.touched">
+              <span *ngIf="milkRecordForm.get('fatPercentage')?.errors?.['required']">Fat percentage is required</span>
+              <span *ngIf="milkRecordForm.get('fatPercentage')?.errors?.['min']">Fat percentage must be positive</span>
+              <span *ngIf="milkRecordForm.get('fatPercentage')?.errors?.['max']">Fat percentage must be less than 100</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="date">Date</label>
+          <input
+            type="date"
+            id="date"
+            formControlName="date"
+          >
+          <div class="error-message" *ngIf="milkRecordForm.get('date')?.invalid && milkRecordForm.get('date')?.touched">
+            Date is required
+          </div>
+        </div>
+
+        <div class="error-message main-error" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="cancel-btn" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="submit-btn" [disabled]="isLoading">
+            <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+            {{ isLoading ? 'Saving...' : 'Add Record' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

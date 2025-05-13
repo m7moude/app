@@ -1,0 +1,269 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Dashboard</h1>
+    <div class="dashboard-actions">
+      <button class="refresh-btn" (click)="loadDashboardData()" title="Refresh data">
+        <i class="fas fa-sync-alt"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading and Error States -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard-content" *ngIf="!isLoading && !errorMessage && dashboardData">
+    <!-- Top Row - Summary Cards -->
+    <div class="dashboard-row">
+      <!-- Total Animals Card -->
+      <div class="dashboard-card summary-card">
+        <div class="card-icon">
+          <i class="fas fa-horse"></i>
+        </div>
+        <div class="card-content">
+          <h3>Total Animals</h3>
+          <div class="card-value">{{ dashboardData.totalAnimals }}</div>
+          <button class="card-action" (click)="navigateTo('/animals')">View All</button>
+        </div>
+      </div>
+
+      <!-- Feed Stock Card -->
+      <div class="dashboard-card summary-card">
+        <div class="card-icon">
+          <i class="fas fa-utensils"></i>
+        </div>
+        <div class="card-content">
+          <h3>Feed Types</h3>
+          <div class="card-value">{{ dashboardData.feedStock.length }}</div>
+          <button class="card-action" (click)="navigateTo('/feed')">Manage Feed</button>
+        </div>
+      </div>
+
+      <!-- Ingredients Card -->
+      <div class="dashboard-card summary-card">
+        <div class="card-icon">
+          <i class="fas fa-shopping-basket"></i>
+        </div>
+        <div class="card-content">
+          <h3>Ingredients</h3>
+          <div class="card-value">{{ dashboardData.ingredientStock.length }}</div>
+          <button class="card-action" (click)="navigateTo('/ingredients')">View Ingredients</button>
+        </div>
+      </div>
+
+      <!-- Vaccinations Card -->
+      <div class="dashboard-card summary-card">
+        <div class="card-icon">
+          <i class="fas fa-syringe"></i>
+        </div>
+        <div class="card-content">
+          <h3>Upcoming Vaccinations</h3>
+          <div class="card-value">{{ dashboardData.upcomingVaccinations.length }}</div>
+          <button class="card-action" (click)="navigateTo('/vaccination')">View Schedule</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Middle Row - Charts -->
+    <div class="dashboard-row">
+      <!-- Animals by Type Chart -->
+      <div class="dashboard-card chart-card">
+        <h3>Animals by Type</h3>
+        <div class="chart-container">
+          <div class="chart-placeholder">
+            <div class="pie-chart">
+              <div *ngFor="let item of animalTypeChartData; let i = index"
+                   class="pie-segment"
+                   [style.--segment-start]="i === 0 ? '0' : ''"
+                   [style.--segment-end]="''"
+                   [style.--segment-color]="'var(--chart-color-' + (i % 5 + 1) + ')'">
+              </div>
+            </div>
+          </div>
+          <div class="chart-legend">
+            <div *ngFor="let item of animalTypeChartData; let i = index" class="legend-item">
+              <span class="legend-color" [style.background-color]="'var(--chart-color-' + (i % 5 + 1) + ')'"></span>
+              <span class="legend-label">{{ item.name }}</span>
+              <span class="legend-value">{{ item.value }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Animals by Gender Chart -->
+      <div class="dashboard-card chart-card">
+        <h3>Animals by Gender</h3>
+        <div class="chart-container">
+          <div class="chart-placeholder">
+            <div class="pie-chart">
+              <div *ngFor="let item of animalGenderChartData; let i = index"
+                   class="pie-segment"
+                   [style.--segment-start]="i === 0 ? '0' : ''"
+                   [style.--segment-end]="''"
+                   [style.--segment-color]="i === 0 ? 'var(--chart-color-1)' : 'var(--chart-color-3)'">
+              </div>
+            </div>
+          </div>
+          <div class="chart-legend">
+            <div *ngFor="let item of animalGenderChartData; let i = index" class="legend-item">
+              <span class="legend-color" [style.background-color]="i === 0 ? 'var(--chart-color-1)' : 'var(--chart-color-3)'"></span>
+              <span class="legend-label">{{ item.name }}</span>
+              <span class="legend-value">{{ item.value }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weight Distribution Chart -->
+      <div class="dashboard-card chart-card">
+        <h3>Weight Distribution</h3>
+        <div class="chart-container">
+          <div class="bar-chart">
+            <div *ngFor="let item of weightDistributionChartData; let i = index" class="bar-chart-item">
+              <div class="bar-label">{{ item.name }}</div>
+              <div class="bar-container">
+                <div class="bar"
+                     [style.width.%]="(item.value / dashboardData.totalAnimals) * 100"
+                     [style.background-color]="'var(--chart-color-' + (i % 5 + 1) + ')'">
+                </div>
+                <span class="bar-value">{{ item.value }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Row - Tables -->
+    <div class="dashboard-row">
+      <!-- Recent Animals Table -->
+      <div class="dashboard-card table-card">
+        <h3>Recent Animals</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Type</th>
+                <th>Gender</th>
+                <th>Weight</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let animal of dashboardData.recentAnimals">
+                <td>{{ animal.code }}</td>
+                <td>{{ animal.animalType }}</td>
+                <td>{{ animal.gender }}</td>
+                <td>{{ animal.weight }} kg</td>
+                <td>{{ getFormattedDate(animal.weightDate) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer">
+          <button class="view-all-btn" (click)="navigateTo('/animals')">View All Animals</button>
+        </div>
+      </div>
+
+      <!-- Stock Levels -->
+      <div class="dashboard-card table-card">
+        <h3>Inventory Status</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of dashboardData.feedStock">
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }} kg</td>
+                <td>
+                  <span class="status-indicator" [ngClass]="getStockStatus(item.quantity)">
+                    {{ getStockStatus(item.quantity) }}
+                  </span>
+                </td>
+              </tr>
+              <tr *ngFor="let item of dashboardData.ingredientStock">
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }} kg</td>
+                <td>
+                  <span class="status-indicator" [ngClass]="getStockStatus(item.quantity)">
+                    {{ getStockStatus(item.quantity) }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer">
+          <button class="view-all-btn" (click)="navigateTo('/feed')">Manage Inventory</button>
+        </div>
+      </div>
+
+      <!-- Upcoming Vaccinations -->
+      <div class="dashboard-card table-card">
+        <h3>Upcoming Vaccinations</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Animal</th>
+                <th>Vaccine</th>
+                <th>Due Date</th>
+                <th>Days Left</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let vaccination of dashboardData.upcomingVaccinations">
+                <td>{{ vaccination.animalCode }}</td>
+                <td>{{ vaccination.vaccineName }}</td>
+                <td>{{ getFormattedDate(vaccination.dueDate) }}</td>
+                <td>
+                  <span class="days-left" [ngClass]="getUrgencyClass(getDaysUntil(vaccination.dueDate))">
+                    {{ getDaysUntil(vaccination.dueDate) }} days
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer">
+          <button class="view-all-btn" (click)="navigateTo('/vaccination')">View All Vaccinations</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions" *ngIf="!isLoading && !errorMessage">
+    <button class="action-btn" (click)="navigateTo('/animals')">
+      <i class="fas fa-plus"></i>
+      <span>Add Animal</span>
+    </button>
+    <button class="action-btn" (click)="navigateTo('/feed')">
+      <i class="fas fa-plus"></i>
+      <span>Add Feed</span>
+    </button>
+    <button class="action-btn" (click)="navigateTo('/ingredients')">
+      <i class="fas fa-plus"></i>
+      <span>Add Ingredient</span>
+    </button>
+    <button class="action-btn" (click)="navigateTo('/vaccination')">
+      <i class="fas fa-calendar-plus"></i>
+      <span>Schedule Vaccination</span>
+    </button>
+  </div>
+</div>

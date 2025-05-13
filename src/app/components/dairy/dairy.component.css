@@ -1,0 +1,441 @@
+.dairy-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+.dairy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+.dairy-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.dairy-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.btn {
+  padding: 10px 15px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #8bc34a;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #7cb342;
+}
+
+.btn-secondary {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background-color: #e0e0e0;
+}
+
+.btn-danger {
+  background-color: #ff5252;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #ff1744;
+}
+
+.search-box {
+  position: relative;
+  width: 300px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px 15px 10px 40px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: #8bc34a;
+  box-shadow: 0 0 0 2px rgba(139, 195, 74, 0.2);
+}
+
+.search-box i {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.dairy-content {
+  flex: 1;
+  position: relative;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.spinner {
+  font-size: 24px;
+  color: #8bc34a;
+}
+
+.error-message {
+  padding: 20px;
+  background-color: rgba(255, 82, 82, 0.1);
+  color: #ff5252;
+  border-radius: 4px;
+  margin: 20px;
+  text-align: center;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.empty-state i {
+  font-size: 48px;
+  color: #ddd;
+  margin-bottom: 20px;
+}
+
+.empty-state p {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.dairy-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+th {
+  background-color: #f9f9f9;
+  font-weight: 600;
+  color: #555;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+th.sortable:hover {
+  background-color: #f0f0f0;
+}
+
+th i {
+  margin-left: 5px;
+  font-size: 12px;
+}
+
+tr:hover {
+  background-color: #f9f9f9;
+}
+
+.expand-cell {
+  width: 40px;
+  text-align: center;
+}
+
+.expand-btn {
+  background: none;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #666;
+}
+
+.expand-btn:hover {
+  background-color: rgba(139, 195, 74, 0.1);
+  color: #8bc34a;
+}
+
+.add-milk-btn {
+  background: none;
+  border: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #8bc34a;
+  margin-left: 8px;
+  font-size: 10px;
+}
+
+.add-milk-btn:hover {
+  background-color: rgba(139, 195, 74, 0.1);
+}
+
+.days-left {
+  font-size: 12px;
+  color: #8bc34a;
+  margin-left: 5px;
+}
+
+.days-passed {
+  font-size: 12px;
+  color: #ff5252;
+  margin-left: 5px;
+}
+
+.actions-cell {
+  white-space: nowrap;
+  width: 100px;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 5px;
+}
+
+.edit-btn {
+  color: #2196f3;
+}
+
+.edit-btn:hover {
+  background-color: rgba(33, 150, 243, 0.1);
+}
+
+.delete-btn {
+  color: #ff5252;
+}
+
+.delete-btn:hover {
+  background-color: rgba(255, 82, 82, 0.1);
+}
+
+/* Expanded Row Styles */
+.expanded-row {
+  background-color: #f9f9f9;
+}
+
+.milk-records {
+  padding: 15px;
+}
+
+.milk-records-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.milk-records-header h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.milk-summary {
+  display: flex;
+  gap: 20px;
+}
+
+.milk-summary span {
+  font-size: 14px;
+  color: #666;
+}
+
+.milk-records-table {
+  margin-bottom: 15px;
+}
+
+.milk-records-table table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #eee;
+}
+
+.milk-records-table th,
+.milk-records-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.milk-records-table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: #555;
+}
+
+.no-records {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+}
+
+.add-milk-record-btn {
+  background-color: transparent;
+  border: 1px solid #8bc34a;
+  color: #8bc34a;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.add-milk-record-btn:hover {
+  background-color: rgba(139, 195, 74, 0.1);
+}
+
+/* Confirmation Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirmation-modal {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 400px;
+  overflow: hidden;
+}
+
+.confirmation-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.confirmation-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.confirmation-body {
+  padding: 20px;
+}
+
+.confirmation-footer {
+  padding: 15px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid #eee;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dairy-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .dairy-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  th, td {
+    padding: 10px;
+  }
+
+  .milk-summary {
+    flex-direction: column;
+    gap: 5px;
+  }
+}

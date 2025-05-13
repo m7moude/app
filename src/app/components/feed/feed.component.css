@@ -1,0 +1,159 @@
+.feed-container {
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: white;
+  border-bottom: 1px solid #eee;
+}
+
+.feed-header h2 {
+  font-size: 24px;
+  color: #333;
+  margin: 0;
+}
+
+.feed-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.btn i {
+  font-size: 14px;
+}
+
+.btn-primary {
+  background-color: #8bc34a;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #7cb342;
+}
+
+.btn-secondary {
+  background-color: #8bc34a;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #7cb342;
+}
+
+.btn-danger {
+  background-color: #8bc34a;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #7cb342;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-box input {
+  padding: 8px 35px 8px 15px;
+  border-radius: 25px;
+  border: 1px solid #e0e0e0;
+  background-color: #f5f5f5;
+  width: 200px;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: #8bc34a;
+  box-shadow: 0 0 0 2px rgba(139, 195, 74, 0.2);
+}
+
+.search-box i {
+  position: absolute;
+  right: 15px;
+  color: #666;
+}
+
+.feed-table {
+  width: 100%;
+  overflow-x: auto;
+  background-color: white;
+  height: calc(100% - 70px);
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  background-color: #f9f9f9;
+  font-weight: 600;
+  color: #555;
+  z-index: 10;
+}
+
+tr:hover {
+  background-color: #f9f9f9;
+}
+
+.protein-bar {
+  position: relative;
+  height: 24px;
+  background-color: #f0f0f0;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.protein-fill {
+  position: absolute;
+  height: 100%;
+  background: linear-gradient(90deg, #8bc34a 0%, #cddc39 100%);
+  left: 0;
+  top: 0;
+  border-radius: 12px;
+}
+
+.protein-bar span {
+  position: relative;
+  display: block;
+  text-align: center;
+  color: #333;
+  line-height: 24px;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+}

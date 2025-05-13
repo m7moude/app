@@ -1,0 +1,185 @@
+<div class="dairy-container">
+  <div class="dairy-header">
+    <h2>Dairy Management</h2>
+    <div class="dairy-actions">
+      <button class="btn btn-primary" (click)="openAddModal()">
+        <i class="fas fa-plus"></i> Add Dairy Animal
+      </button>
+      <div class="search-box">
+        <input type="text" placeholder="Search dairy animals..." (input)="onSearch($event)">
+        <i class="fas fa-search"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="dairy-content">
+    <div class="loading-overlay" *ngIf="isLoading">
+      <div class="spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+      </div>
+    </div>
+
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <div class="empty-state" *ngIf="!isLoading && filteredDairyAnimals.length === 0">
+      <i class="fas fa-wine-bottle"></i>
+      <p>No dairy animals found. Add your first dairy animal to get started.</p>
+      <button class="btn btn-primary" (click)="openAddModal()">
+        <i class="fas fa-plus"></i> Add Dairy Animal
+      </button>
+    </div>
+
+    <div class="dairy-table" *ngIf="!isLoading && filteredDairyAnimals.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th (click)="onSort('code')" class="sortable">
+              Code <i [class]="getSortIcon('code')"></i>
+            </th>
+            <th (click)="onSort('animalType')" class="sortable">
+              Type <i [class]="getSortIcon('animalType')"></i>
+            </th>
+            <th (click)="onSort('noFamily')" class="sortable">
+              Family <i [class]="getSortIcon('noFamily')"></i>
+            </th>
+            <th (click)="onSort('milk')" class="sortable">
+              Latest Milk (L) <i [class]="getSortIcon('milk')"></i>
+            </th>
+            <th (click)="onSort('fatPercentage')" class="sortable">
+              Fat % <i [class]="getSortIcon('fatPercentage')"></i>
+            </th>
+            <th (click)="onSort('weight')" class="sortable">
+              Weight (kg) <i [class]="getSortIcon('weight')"></i>
+            </th>
+            <th (click)="onSort('dateFertilization')" class="sortable">
+              Fertilization Date <i [class]="getSortIcon('dateFertilization')"></i>
+            </th>
+            <th (click)="onSort('expectedDate')" class="sortable">
+              Expected Date <i [class]="getSortIcon('expectedDate')"></i>
+            </th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let dairy of filteredDairyAnimals">
+            <!-- Main Row -->
+            <tr>
+              <td class="expand-cell">
+                <button class="expand-btn" (click)="toggleExpandRow(dairy.id)" title="Show milk records">
+                  <i class="fas" [ngClass]="isRowExpanded(dairy.id) ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                </button>
+              </td>
+              <td>{{ dairy.code }}</td>
+              <td>{{ dairy.animalType }}</td>
+              <td>{{ dairy.noFamily }}</td>
+              <td>
+                {{ getLatestMilkRecord(dairy)?.milk || 'No records' }}
+                <button class="add-milk-btn" (click)="openAddMilkRecordModal(dairy)" title="Add milk record">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </td>
+              <td>{{ getLatestMilkRecord(dairy)?.fatPercentage || 'No records' }}%</td>
+              <td>{{ dairy.weight }}</td>
+              <td>{{ formatDate(dairy.dateFertilization) }}</td>
+              <td>
+                {{ formatDate(dairy.expectedDate) }}
+                <span class="days-left" *ngIf="getDaysUntilExpected(dairy.expectedDate) > 0">
+                  ({{ getDaysUntilExpected(dairy.expectedDate) }} days left)
+                </span>
+                <span class="days-passed" *ngIf="getDaysUntilExpected(dairy.expectedDate) <= 0">
+                  ({{ -getDaysUntilExpected(dairy.expectedDate) }} days passed)
+                </span>
+              </td>
+              <td class="actions-cell">
+                <button class="action-btn edit-btn" (click)="openEditModal(dairy)" title="Edit">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn delete-btn" (click)="confirmDelete(dairy.id)" title="Delete">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+
+            <!-- Expanded Row for Milk Records -->
+            <tr *ngIf="isRowExpanded(dairy.id)" class="expanded-row">
+              <td colspan="10">
+                <div class="milk-records">
+                  <div class="milk-records-header">
+                    <h4>Milk Records</h4>
+                    <div class="milk-summary">
+                      <span>Total: {{ getTotalMilk(dairy) }} L</span>
+                      <span>Average Fat: {{ getAverageFatPercentage(dairy).toFixed(2) }}%</span>
+                    </div>
+                  </div>
+
+                  <div class="milk-records-table">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Milk (L)</th>
+                          <th>Fat %</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let record of dairy.milk">
+                          <td>{{ record.date ? formatDate(record.date) : 'N/A' }}</td>
+                          <td>{{ record.milk }}</td>
+                          <td>{{ record.fatPercentage }}%</td>
+                        </tr>
+                        <tr *ngIf="dairy.milk.length === 0">
+                          <td colspan="3" class="no-records">No milk records available</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <button class="add-milk-record-btn" (click)="openAddMilkRecordModal(dairy)">
+                    <i class="fas fa-plus"></i> Add Milk Record
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showDeleteConfirmation">
+  <div class="confirmation-modal">
+    <div class="confirmation-header">
+      <h3>Confirm Delete</h3>
+    </div>
+    <div class="confirmation-body">
+      <p>Are you sure you want to delete this dairy animal? This action cannot be undone.</p>
+    </div>
+    <div class="confirmation-footer">
+      <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+      <button class="btn btn-danger" (click)="deleteDairy()">
+        <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+        {{ isLoading ? 'Deleting...' : 'Delete' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Dairy Modal -->
+<div *ngIf="showAddModal">
+  <app-add-dairy-modal (close)="closeAddModal($event)"></app-add-dairy-modal>
+</div>
+
+<!-- Edit Dairy Modal -->
+<div *ngIf="showEditModal">
+  <app-edit-dairy-modal [dairy]="selectedDairy" (close)="closeEditModal($event)"></app-edit-dairy-modal>
+</div>
+
+<!-- Add Milk Record Modal -->
+<div *ngIf="showAddMilkRecordModal">
+  <app-add-milk-record-modal [dairy]="selectedDairy" (close)="closeAddMilkRecordModal($event)"></app-add-milk-record-modal>
+</div>
