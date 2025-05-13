@@ -9,6 +9,38 @@
 
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
         <div class="form-group">
+          <label for="userName">
+            <i class="fas fa-user"></i> Username
+          </label>
+          <input
+            type="text"
+            id="userName"
+            formControlName="userName"
+            placeholder="Enter your username"
+            [ngClass]="{'invalid': registerForm.get('userName')?.invalid && registerForm.get('userName')?.touched}"
+          >
+          <div class="error-message" *ngIf="registerForm.get('userName')?.invalid && registerForm.get('userName')?.touched">
+            <span *ngIf="registerForm.get('userName')?.errors?.['required']">Username is required</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="name">
+            <i class="fas fa-id-card"></i> Full Name
+          </label>
+          <input
+            type="text"
+            id="name"
+            formControlName="name"
+            placeholder="Enter your full name"
+            [ngClass]="{'invalid': registerForm.get('name')?.invalid && registerForm.get('name')?.touched}"
+          >
+          <div class="error-message" *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
+            <span *ngIf="registerForm.get('name')?.errors?.['required']">Full name is required</span>
+          </div>
+        </div>
+
+        <div class="form-group">
           <label for="email">
             <i class="fas fa-envelope"></i> Email
           </label>
@@ -62,7 +94,7 @@
                 type="radio"
                 id="owner"
                 formControlName="role"
-                value="owner"
+                value="Owner"
               >
               <label for="owner">Owner</label>
             </div>
@@ -71,7 +103,7 @@
                 type="radio"
                 id="engineer"
                 formControlName="role"
-                value="engineer"
+                value="Engineer"
               >
               <label for="engineer">Engineer</label>
             </div>

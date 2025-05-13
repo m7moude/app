@@ -6,9 +6,12 @@ import { Router } from '@angular/router';
 
 export interface User {
   id?: number;
+  userName?: string;
+  name?: string;
   email: string;
   password?: string;
-  role: string; // 'owner' or 'engineer'
+  roles?: string[];
+  role?: string; // For backward compatibility
   token?: string;
 }
 
@@ -62,7 +65,16 @@ export class AuthService {
   }
 
   register(user: User): Observable<User> {
-    return this.http.post<RegisterResponse>(`${this.apiUrl}/Accounts/Register`, user)
+    // Format the request body according to the API requirements
+    const requestBody = {
+      userName: user.userName || user.email.split('@')[0], // Use email username if userName not provided
+      name: user.name || user.userName || user.email.split('@')[0], // Use userName or email username if name not provided
+      email: user.email,
+      password: user.password,
+      roles: user.roles || [user.role || 'User'] // Use role as fallback or default to 'User'
+    };
+
+    return this.http.post<RegisterResponse>(`${this.apiUrl}/Accounts/Register`, requestBody)
       .pipe(
         map(response => {
           const newUser = response.user;
@@ -75,8 +87,10 @@ export class AuthService {
           // For demo purposes, simulate successful registration with mock data
           const mockUser: User = {
             id: Math.floor(Math.random() * 1000) + 1,
+            userName: requestBody.userName,
+            name: requestBody.name,
             email: user.email,
-            role: user.role,
+            roles: requestBody.roles,
             token: 'mock-jwt-token'
           };
           this.setCurrentUser(mockUser);
@@ -110,15 +124,25 @@ export class AuthService {
 
   getUserRole(): string | null {
     const user = this.getCurrentUser();
-    return user ? user.role : null;
+    if (!user) return null;
+
+    // If roles array exists, return the first role
+    if (user.roles && user.roles.length > 0) {
+      return user.roles[0];
+    }
+
+    // Fallback to the role property
+    return user.role || null;
   }
 
   isOwner(): boolean {
-    return this.getUserRole() === 'owner';
+    const role = this.getUserRole();
+    return role === 'owner' || role === 'Owner';
   }
 
   isEngineer(): boolean {
-    return this.getUserRole() === 'engineer';
+    const role = this.getUserRole();
+    return role === 'engineer' || role === 'Engineer';
   }
 
   forgotPassword(email: string): Observable<any> {

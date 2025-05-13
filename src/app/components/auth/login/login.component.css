@@ -196,7 +196,7 @@ input.invalid {
 
 .auth-image {
   flex: 1;
-  background-image: url('/assets/images/auth-bg.svg');
+  background-image: url('/assets/images/auth-bg.jpg');
   background-size: cover;
   background-position: center;
   display: none;

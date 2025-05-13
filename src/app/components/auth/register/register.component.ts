@@ -32,9 +32,11 @@ export class RegisterComponent implements OnInit {
 
   initForm(): void {
     this.registerForm = this.fb.group({
+      userName: ['', Validators.required],
+      name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      role: ['owner', Validators.required] // Default to 'owner'
+      role: ['Owner', Validators.required] // Default to 'Owner'
     });
   }
 
@@ -51,7 +53,16 @@ export class RegisterComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    const newUser: User = this.registerForm.value;
+    const formValues = this.registerForm.value;
+
+    // Create user object with the correct format
+    const newUser: User = {
+      userName: formValues.userName,
+      name: formValues.name,
+      email: formValues.email,
+      password: formValues.password,
+      roles: [formValues.role] // Convert role to roles array
+    };
 
     this.authService.register(newUser).subscribe({
       next: () => {
