@@ -45,11 +45,12 @@
           <div class="ingredient-add-container">
             <div class="ingredient-add-fields">
               <div class="ingredient-select">
-                <label>Ingredient</label>
-                <select #ingredientSelect class="scrollable-select" size="4">
-                  <option value="" disabled selected>Select ingredient</option>
-                  <option *ngFor="let ing of ingredients" [value]="ing.id">{{ ing.name }}</option>
-                </select>
+                <app-custom-dropdown
+                  [options]="ingredients"
+                  [placeholder]="'Select ingredient'"
+                  [label]="'Ingredient'"
+                  (selectionChange)="onIngredientSelected($event)"
+                ></app-custom-dropdown>
               </div>
 
               <div class="ingredient-price">
@@ -57,7 +58,7 @@
                 <input type="number" #ingredientPrice placeholder="Enter price" min="0">
               </div>
 
-              <button type="button" class="add-ingredient-btn" (click)="addIngredientWithValues(ingredientSelect.value, ingredientPrice.value)">
+              <button type="button" class="add-ingredient-btn" (click)="addIngredientWithValues(ingredientPrice.value)">
                 <i class="fas fa-plus"></i> Add
               </button>
             </div>

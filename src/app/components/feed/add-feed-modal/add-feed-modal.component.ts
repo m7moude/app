@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { FeedService, Ingredient } from '../../../services/feed.service';
+import { CustomDropdownComponent } from '../../../shared/custom-dropdown/custom-dropdown.component';
 
 @Component({
   selector: 'app-add-feed-modal',
@@ -9,11 +10,12 @@ import { FeedService, Ingredient } from '../../../services/feed.service';
 })
 export class AddFeedModalComponent implements OnInit {
   @Output() close = new EventEmitter<boolean>();
-  @ViewChild('ingredientSelect') ingredientSelect!: ElementRef;
   @ViewChild('ingredientPrice') ingredientPrice!: ElementRef;
+  @ViewChild(CustomDropdownComponent) ingredientDropdown!: CustomDropdownComponent;
 
   feedForm: FormGroup;
   ingredients: Ingredient[] = [];
+  selectedIngredientId: number | null = null;
   isLoading = false;
   errorMessage = '';
 
@@ -34,12 +36,12 @@ export class AddFeedModalComponent implements OnInit {
 
   loadIngredients(): void {
     this.isLoading = true;
-    this.feedService.getIngredients().subscribe(
-      (data) => {
+    this.feedService.getIngredients().subscribe({
+      next: (data) => {
         this.ingredients = data;
         this.isLoading = false;
       },
-      (error) => {
+      error: (error) => {
         console.error('Error loading ingredients', error);
         this.errorMessage = 'Failed to load ingredients. Please try again.';
         this.isLoading = false;
@@ -53,7 +55,7 @@ export class AddFeedModalComponent implements OnInit {
           { id: 5, name: 'Vitamins' }
         ];
       }
-    );
+    });
   }
 
   get ingredientPriceControls() {
@@ -70,8 +72,12 @@ export class AddFeedModalComponent implements OnInit {
     );
   }
 
-  addIngredientWithValues(ingredientId: string, price: string): void {
-    if (!ingredientId || ingredientId === '') {
+  onIngredientSelected(ingredientId: any): void {
+    this.selectedIngredientId = ingredientId;
+  }
+
+  addIngredientWithValues(price: string): void {
+    if (this.selectedIngredientId === null) {
       alert('Please select an ingredient');
       return;
     }
@@ -84,7 +90,7 @@ export class AddFeedModalComponent implements OnInit {
     // Check if this ingredient is already added
     const ingredientPriceArray = this.feedForm.get('ingredientPrice') as FormArray;
     const alreadyExists = ingredientPriceArray.controls.some(
-      control => control.get('id')?.value === parseInt(ingredientId)
+      control => control.get('id')?.value === this.selectedIngredientId
     );
 
     if (alreadyExists) {
@@ -95,13 +101,16 @@ export class AddFeedModalComponent implements OnInit {
     // Add the ingredient to the form
     ingredientPriceArray.push(
       this.fb.group({
-        id: [parseInt(ingredientId), Validators.required],
+        id: [this.selectedIngredientId, Validators.required],
         price: [parseFloat(price), [Validators.required, Validators.min(0)]]
       })
     );
 
     // Reset the input fields
-    this.ingredientSelect.nativeElement.value = '';
+    if (this.ingredientDropdown) {
+      this.ingredientDropdown.selectedId = null;
+      this.selectedIngredientId = null;
+    }
     this.ingredientPrice.nativeElement.value = '';
   }
 
@@ -128,17 +137,17 @@ export class AddFeedModalComponent implements OnInit {
     }
 
     this.isLoading = true;
-    this.feedService.createFeed(this.feedForm.value).subscribe(
-      (response) => {
+    this.feedService.createFeed(this.feedForm.value).subscribe({
+      next: () => {
         this.isLoading = false;
         this.closeModal(true);
       },
-      (error) => {
+      error: (error) => {
         console.error('Error creating feed', error);
         this.errorMessage = 'Failed to create feed. Please try again.';
         this.isLoading = false;
       }
-    );
+    });
   }
 
   closeModal(success = false): void {
